@@ -15,5 +15,5 @@ void main() {
 	vertexColor = gl_Color;
 	normal = gl_NormalMatrix * gl_Normal;
 
-	vertexDst = length((gl_ModelViewMatrix * gl_Vertex).xyz);	// distance to the vertex (in camera space)
+	vertexDst = length((gl_ModelViewMatrix * gl_Vertex).xyz);		// distance to the vertex (in camera space)
 }

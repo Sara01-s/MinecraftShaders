@@ -6,9 +6,8 @@ in vec2 texcoords;
 
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
-uniform sampler2D lightmap;
 
-#include "shadows.glsl"
+#include "/lib/shadows.glsl"
 
 void main() {
 	vec3 albedo = texture(COMPOSITE_OUTPUT, texcoords).rgb;
@@ -23,5 +22,5 @@ void main() {
 	vec3 shadow = getShadow(clipSpace);
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = vec4(albedo.rg, 0.0, 1.0);
+	gl_FragData[0] = vec4(albedo * shadow, 1.0);
 }

@@ -1,7 +1,8 @@
 #version 330 compatibility
 
-#include "settings.glsl"
-#include "light_model.glsl"
+#include "/lib/settings.glsl"
+#include "/lib/light_model.glsl"
+#include "/lib/utils.glsl"
 
 in vec2 texcoords;
 in vec2 lmcoords;
@@ -11,7 +12,6 @@ in vec3 normal;
 
 uniform sampler2D gtexture;
 uniform sampler2D lightmap;
-uniform vec3 shadowLightPosition;
 
 uniform vec3 fogColor;
 uniform float fogStart;
@@ -24,14 +24,14 @@ void main() {
 		discard;
 	}
 
-    vec4 terrainColor = texColor * vertexColor;
+	vec4 lightmapColor = texture(lightmap, lmcoords);
+    vec4 terrainColor = texColor * vertexColor * lightmapColor; // minecraft classic look
 
 	float fogIntensity = smoothstep(fogStart, fogEnd, vertexDst);
-	vec3 terrainWithFog = vec3(mix(terrainColor.rgb, fogColor, fogIntensity));
+	vec3 terrainWithFog = mix(terrainColor.rgb, fogColor, fogIntensity);
 
-	vec3 albedo = getLighting(terrainWithFog, normal, shadowLightPosition);
-	vec2 light = texture(lightmap, lmcoords).rg;
+	vec3 albedo = getLighting(terrainWithFog, normal, lmcoords);
 
-/* DRAWBUFFERS:01 */
-    gl_FragData[0] = vec4(light, 0.0, terrainColor.a);
+/* DRAWBUFFERS:0 */
+    gl_FragData[0] = vec4(albedo, texColor.a);
 }
