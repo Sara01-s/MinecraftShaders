@@ -36,18 +36,20 @@ vec3 getShadowColor(vec3 sampleCoords, float bias) {
     float shadowVisibility0 = isVisibleByTheLight(shadowtex0, sampleCoords, bias);
     float shadowVisibility1 = isVisibleByTheLight(shadowtex1, sampleCoords, bias);
 
-    vec4 shadowColor = texture(shadowcolor0, sampleCoords.xy);
-    vec3 transmittedColor = shadowColor.rgb - (1.0 - shadowColor.a);
+    vec4 shadowMapColor = texture(shadowcolor0, sampleCoords.xy);
+    vec3 transmittedColor = shadowMapColor.rgb - (1.0 - shadowMapColor.a);
+	vec3 shadowColor = transmittedColor * shadowVisibility1 + SHADOW_BRIGHTNESS;
 
-	bool s0 = shadowVisibility0 > 0.5 ? true : false;
-	if (s0) {
-		return vec3(1.0);
-	}
-	else {
-		return (transmittedColor * shadowVisibility1) + SHADOW_BRIGHTNESS; // evitar sombras debajo de bloques
-	}
+    return mix(shadowColor, vec3(1.0), shadowVisibility0);
 
-    //return mix(transmittedColor * shadowVisibility1, vec3(1.0), shadowVisibility0);
+
+	// bool s0 = shadowVisibility0 > 0.5 ? true : false;
+	// if (s0) {
+	// 	return vec3(1.0);
+	// }
+	// else {
+	// 	return (transmittedColor * shadowVisibility1) + SHADOW_BRIGHTNESS; // evitar sombras debajo de bloques
+	// }
 }
 
 vec3 getShadow(vec3 clipSpace) {
